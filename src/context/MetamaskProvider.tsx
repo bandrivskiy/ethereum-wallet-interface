@@ -4,6 +4,18 @@ import { formatBalance } from "../utils";
 
 // TODO: refactor
 declare let window: any;
+export type EVMChainParameter = {
+  chainId: string;
+  blockExplorerUrls?: string[];
+  chainName?: string;
+  iconUrls?: string[];
+  nativeCurrency?: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  rpcUrls?: string[];
+};
 
 interface WalletState {
   accounts: any[];
@@ -19,6 +31,37 @@ interface MetaMaskContextData {
   isConnecting: boolean;
   connectMetaMask: () => void;
   clearError: () => void;
+
+  addChain: (parameters: EVMChainParameter) => Promise<void>;
+  switchChain: (chainId: string) => Promise<void>;
+  ethereum: any;
+}
+const getProvider = () => {
+  const ethereum = window.ethereum;
+  if (!ethereum) return null;
+  return ethereum;
+};
+const addEthereumChain = async (parameters: EVMChainParameter) => {
+  const ethereum = getProvider();
+  try {
+    await ethereum.request({
+      method: "wallet_addEthereumChain",
+      params: [parameters],
+    });
+  } catch (err: unknown) {
+    throw err;
+  }
+};
+async function switchEthereumChain(chainId: string) {
+  const ethereum = getProvider();
+  try {
+    await ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId }],
+    });
+  } catch (err: unknown) {
+    throw err;
+  }
 }
 
 const disconnectedState: WalletState = { accounts: [], balance: "", chainId: "" };
@@ -102,6 +145,27 @@ export const MetaMaskContextProvider = ({ children }: PropsWithChildren) => {
     setIsConnecting(false);
   };
 
+  const addChain = useCallback(
+    (parameters: EVMChainParameter) => {
+      if (!hasProvider) {
+        return Promise.resolve();
+      }
+      return addEthereumChain(parameters);
+    },
+    [hasProvider]
+  );
+
+  const switchChain = useCallback(
+    (chainId: string) => {
+      if (!hasProvider) {
+        console.warn("`switchChain` method has been called while MetaMask is not available or synchronising. Nothing will be done in this case.");
+        return Promise.resolve();
+      }
+      return switchEthereumChain(chainId);
+    },
+    [hasProvider]
+  );
+
   return (
     <MetaMaskContext.Provider
       value={{
@@ -112,6 +176,10 @@ export const MetaMaskContextProvider = ({ children }: PropsWithChildren) => {
         isConnecting,
         connectMetaMask,
         clearError,
+
+        addChain,
+        switchChain,
+        ethereum: getProvider(),
       }}
     >
       {children}

@@ -1,7 +1,8 @@
 import { useMetaMask } from "../context/MetamaskProvider";
+import { evmNetworks } from "../utils";
 
 export const Wallet = () => {
-  const { wallet, hasProvider, isConnecting, connectMetaMask } = useMetaMask();
+  const { wallet, hasProvider, switchChain, isConnecting, connectMetaMask } = useMetaMask();
   return (
     <div className="container">
       <div className="connect-section">
@@ -16,6 +17,10 @@ export const Wallet = () => {
           </a>
         )}
       </div>
+
+      {evmNetworks.map((network) => (
+        <button onClick={() => switchChain(network.chainId)}>{network.chainName}</button>
+      ))}
     </div>
   );
 };
