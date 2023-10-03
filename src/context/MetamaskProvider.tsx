@@ -1,26 +1,15 @@
 import { useState, useEffect, createContext, PropsWithChildren, useContext, useCallback } from "react";
 import detectEthereumProvider from "@metamask/detect-provider";
-import { formatBalance } from "../utils";
+import { EVMChainParameter, formatBalance, Networks } from "../utils";
+import { addEthereumChain, switchEthereumChain } from "../service/wallet";
 
 // TODO: refactor
 declare let window: any;
-export type EVMChainParameter = {
-  chainId: string;
-  blockExplorerUrls?: string[];
-  chainName?: string;
-  iconUrls?: string[];
-  nativeCurrency?: {
-    name: string;
-    symbol: string;
-    decimals: number;
-  };
-  rpcUrls?: string[];
-};
 
 interface WalletState {
   accounts: any[];
   balance: string;
-  chainId: string;
+  chainId: Networks | null;
 }
 
 interface MetaMaskContextData {
@@ -34,37 +23,9 @@ interface MetaMaskContextData {
 
   addChain: (parameters: EVMChainParameter) => Promise<void>;
   switchChain: (chainId: string) => Promise<void>;
-  ethereum: any;
-}
-const getProvider = () => {
-  const ethereum = window.ethereum;
-  if (!ethereum) return null;
-  return ethereum;
-};
-const addEthereumChain = async (parameters: EVMChainParameter) => {
-  const ethereum = getProvider();
-  try {
-    await ethereum.request({
-      method: "wallet_addEthereumChain",
-      params: [parameters],
-    });
-  } catch (err: unknown) {
-    throw err;
-  }
-};
-async function switchEthereumChain(chainId: string) {
-  const ethereum = getProvider();
-  try {
-    await ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId }],
-    });
-  } catch (err: unknown) {
-    throw err;
-  }
 }
 
-const disconnectedState: WalletState = { accounts: [], balance: "", chainId: "" };
+const disconnectedState: WalletState = { accounts: [], balance: "", chainId: null };
 
 const MetaMaskContext = createContext<MetaMaskContextData>({} as MetaMaskContextData);
 
@@ -72,7 +33,6 @@ export const MetaMaskContextProvider = ({ children }: PropsWithChildren) => {
   const [hasProvider, setHasProvider] = useState<boolean | null>(null);
 
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isConnected, setIsConne] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
   const clearError = () => setErrorMessage("");
@@ -179,7 +139,6 @@ export const MetaMaskContextProvider = ({ children }: PropsWithChildren) => {
 
         addChain,
         switchChain,
-        ethereum: getProvider(),
       }}
     >
       {children}
