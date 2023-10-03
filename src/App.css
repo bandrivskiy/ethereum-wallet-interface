@@ -39,7 +39,65 @@
 .container {
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 100px 15px;
 }
 .connect-section {
+  padding: 20px;
+}
+.pl-1 {
+  padding-left: 10px;
+}
+
+.p-1 {
+  padding: 10px;
+}
+.p-2 {
+  padding: 20px;
+}
+button {
+  padding: 20px;
+  cursor: pointer;
+}
+.network-section {
+  padding: 20px;
+}
+.tokens-section {
+  padding: 20px;
+}
+.token {
+  display: flex;
+  justify-content: space-between;
+}
+.tokens-section span {
+  font-size: 12px;
+  font-style: italic;
+  color: #282c34;
+}
+
+.network {
+  color: #fff;
+  background-color: #1976d2;
+  font-size: 14px;
+  text-transform: uppercase;
+  border-radius: 3px;
+  border: 2px solid;
+  border-color: transparent;
+  margin: 10px;
+}
+.current {
+  border-color: #1976d2;
+  font-size: 14px;
+  text-transform: uppercase;
+  border-radius: 3px;
+  background-color: white;
+  color: #1976d2;
+}
+.error {
+  border: 2px solid #d54535;
+  border-radius: 3px;
+
+  color: #d54535;
+  padding: 20px;
 }

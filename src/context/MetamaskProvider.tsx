@@ -6,7 +6,7 @@ import { addEthereumChain, switchEthereumChain } from "../service/wallet";
 // TODO: refactor
 declare let window: any;
 
-interface WalletState {
+export interface WalletState {
   accounts: any[];
   balance: string;
   chainId: Networks | null;
@@ -21,8 +21,8 @@ interface MetaMaskContextData {
   connectMetaMask: () => void;
   clearError: () => void;
 
-  addChain: (parameters: EVMChainParameter) => Promise<void>;
-  switchChain: (chainId: string) => Promise<void>;
+  addChain: (parameters: EVMChainParameter) => void;
+  switchChain: (chainId: string) => void;
 }
 
 const disconnectedState: WalletState = { accounts: [], balance: "", chainId: null };
@@ -106,22 +106,32 @@ export const MetaMaskContextProvider = ({ children }: PropsWithChildren) => {
   };
 
   const addChain = useCallback(
-    (parameters: EVMChainParameter) => {
-      if (!hasProvider) {
-        return Promise.resolve();
+    async (parameters: EVMChainParameter) => {
+      try {
+        if (!hasProvider) {
+          return Promise.resolve();
+        }
+        clearError();
+        await addEthereumChain(parameters);
+      } catch (err: any) {
+        setErrorMessage(err.message);
       }
-      return addEthereumChain(parameters);
     },
     [hasProvider]
   );
 
   const switchChain = useCallback(
-    (chainId: string) => {
-      if (!hasProvider) {
-        console.warn("`switchChain` method has been called while MetaMask is not available or synchronising. Nothing will be done in this case.");
-        return Promise.resolve();
+    async (chainId: string) => {
+      try {
+        if (!hasProvider) {
+          console.warn("`switchChain` method has been called while MetaMask is not available or synchronising. Nothing will be done in this case.");
+          return Promise.resolve();
+        }
+        clearError();
+        await switchEthereumChain(chainId);
+      } catch (err: any) {
+        setErrorMessage(err.message);
       }
-      return switchEthereumChain(chainId);
     },
     [hasProvider]
   );

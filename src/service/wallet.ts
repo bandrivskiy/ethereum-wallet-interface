@@ -14,7 +14,7 @@ export const addEthereumChain = async (parameters: EVMChainParameter) => {
       params: [parameters],
     });
   } catch (err: unknown) {
-    throw err;
+    throw new Error("Failed to add Ethereum chain.");
   }
 };
 
@@ -26,6 +26,7 @@ export const switchEthereumChain = async (chainId: string) => {
       params: [{ chainId }],
     });
   } catch (err: unknown) {
-    throw err;
+    console.log(err);
+    throw new Error("Failed to switch Ethereum chain.");
   }
 };
