@@ -1,3 +1,9 @@
+# Test Task: Ethereum Wallet Interface
+
+This Git repository contains a single-page React application that facilitates the integration of Metamask wallets. The application's primary function is to retrieve and display a user's token holdings from their Metamask wallet, encompassing popular tokens like Ethereum (ETH), Tether (USDT), USD Coin (USDC), and Curve (CRV). Additionally, it offers compatibility with multiple blockchain networks, including Ethereum (ETH), Arbitrum, and Polygon, enabling users to monitor their token balances across these networks. This repository serves as the codebase for the development of this web application, allowing for collaborative contributions and maintenance.
+
+- [Live demo](https://ethereum-wallet-interface.vercel.app/).
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
